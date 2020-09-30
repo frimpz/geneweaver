@@ -1,0 +1,10 @@
+
+1. adj_data:
+    g -> Adjacency matrix unweighted
+    gw -> Adjanceny matrix weighted
+
+
+2. gene_2:
+    adj_2 -> Adjacency matrix with jaccard similarity
+    node_graph_2 -> Contains gene sets and their corresponding genes
+    node_graph_np_2 -> Feature matrix

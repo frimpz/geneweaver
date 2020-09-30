@@ -1,0 +1,19 @@
+LINE 205 : 2020-09-17 18:46:40,007 [DEBUG   ] Starting new HTTP connection (1): amp.pharm.mssm.edu:80
+LINE 393 : 2020-09-17 18:46:40,310 [DEBUG   ] http://amp.pharm.mssm.edu:80 "GET /Enrichr/datasetStatistics HTTP/1.1" 307 171
+LINE 813 : 2020-09-17 18:46:40,317 [DEBUG   ] Starting new HTTPS connection (1): maayanlab.cloud:443
+LINE 393 : 2020-09-17 18:46:40,805 [DEBUG   ] https://maayanlab.cloud:443 "GET /Enrichr/datasetStatistics HTTP/1.1" 200 None
+LINE 351 : 2020-09-17 18:46:40,913 [INFO    ] Connecting to Enrichr Server to get latest library names
+LINE 369 : 2020-09-17 18:46:40,916 [DEBUG   ] Start Enrichr using library: KEGG_2016
+LINE 370 : 2020-09-17 18:46:40,917 [INFO    ] Analysis name: pathway, Enrichr Library: KEGG_2016
+LINE 205 : 2020-09-17 18:46:40,921 [DEBUG   ] Starting new HTTP connection (1): amp.pharm.mssm.edu:80
+LINE 393 : 2020-09-17 18:46:41,129 [DEBUG   ] http://amp.pharm.mssm.edu:80 "POST /Enrichr/addList HTTP/1.1" 307 171
+LINE 813 : 2020-09-17 18:46:41,137 [DEBUG   ] Starting new HTTPS connection (1): maayanlab.cloud:443
+LINE 393 : 2020-09-17 18:46:41,529 [DEBUG   ] https://maayanlab.cloud:443 "POST /Enrichr/addList HTTP/1.1" 200 74
+LINE 205 : 2020-09-17 18:46:42,538 [DEBUG   ] Starting new HTTP connection (1): amp.pharm.mssm.edu:80
+LINE 393 : 2020-09-17 18:46:42,772 [DEBUG   ] http://amp.pharm.mssm.edu:80 "GET /Enrichr/export?userListId=29987807&filename=KEGG_2016.pathway.reports&backgroundType=KEGG_2016 HTTP/1.1" 307 171
+LINE 813 : 2020-09-17 18:46:42,781 [DEBUG   ] Starting new HTTPS connection (1): maayanlab.cloud:443
+LINE 393 : 2020-09-17 18:46:43,162 [DEBUG   ] https://maayanlab.cloud:443 "GET /Enrichr/export?userListId=29987807&filename=KEGG_2016.pathway.reports&backgroundType=KEGG_2016 HTTP/1.1" 200 1873
+LINE 378 : 2020-09-17 18:46:43,196 [INFO    ] Save file of enrichment results: Job Id:ead52e384c98b57da2998a639d9d085a
+LINE 387 : 2020-09-17 18:46:43,216 [WARNING ] Warning: No enrich terms using library KEGG_2016 when cutoff = 0.05
+LINE 388 : 2020-09-17 18:46:43,217 [INFO    ] Done.
+
