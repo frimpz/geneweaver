@@ -13,6 +13,7 @@ from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
 from sklearn.metrics import roc_curve
 from sklearn.neighbors import NearestNeighbors
+from yellowbrick.cluster import SilhouetteVisualizer, InterclusterDistance
 
 
 def pairwise_scatter(data, hue, x_vars, y_vars, title="", marker=None):
@@ -94,6 +95,18 @@ def k_meansElbow(data, type):
     plt.show()
 
 
+def silhouettevisual(model, X, graph):
+    visualizer = SilhouetteVisualizer(model, colors='yellowbrick', title=" Silhouette Plot of KMeans Clustering for "+ graph)
+    visualizer.fit(X)
+    visualizer.show()
+
+
+def cluster_distances(model, X, graph):
+    visualizer = InterclusterDistance(model, legend=True, legend_loc='upper left', title=" KMeans Intercluster Distance Map for "+ graph)
+    visualizer.fit(X)
+    visualizer.show()
+
+
 def opt_dbScan(data, type):
     neighbour = NearestNeighbors(n_neighbors=2)
     nbrs = neighbour.fit(data)
@@ -113,7 +126,7 @@ def plot_loss(x, y, x_label, y_label, title):
     plt.show()
 
 
-def auc_roc(emb, adj_orig, edges_pos, edges_neg, roc_score):
+def auc_roc(emb, adj_orig, edges_pos, edges_neg, roc_score, title):
     lw = 2
 
     def sigmoid(x):
@@ -146,7 +159,7 @@ def auc_roc(emb, adj_orig, edges_pos, edges_neg, roc_score):
     plt.ylim([0.0, 1.05])
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic')
+    plt.title('Receiver operating characteristic '+ title)
     plt.legend(loc="lower right")
     plt.show()
 

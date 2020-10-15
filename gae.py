@@ -45,7 +45,7 @@ if args.cuda:
     torch.cuda.manual_seed(args.seed)
 
 
-adj, features = load_gene_data(use_features=True, _adj='homology', _feat='ontology')
+adj, features = load_gene_data(use_features=True, _adj='ontology', _feat='ontology')
 
 # Store original adjacency matrix (without diagonal entries) for later
 adj_orig = adj
@@ -112,8 +112,8 @@ print('Test ROC score: ' + str(roc_score))
 print('Test AP score: ' + str(ap_score))
 
 
-auc_roc(hidden_emb, adj_orig, test_edges, test_edges_false, roc_score)
+auc_roc(hidden_emb, adj_orig, test_edges, test_edges_false, roc_score, "Ontology Only")
 
-torch.save(model.state_dict(), "models/gae_onto_only")
+# torch.save(model.state_dict(), "models/gae_onto_only")
 
-plot_loss(indices, losses, "Epooch", "Loss", "Epooch vs loss")
+# plot_loss(indices, losses, "Epooch", "Loss", "Epooch vs loss")

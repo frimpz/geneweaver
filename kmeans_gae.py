@@ -3,6 +3,8 @@ import pickle
 import torch
 import argparse
 
+from sklearn.cluster import KMeans
+
 from cluster_utils import k_means, plot_optimal_clusters, plots_pairwise, plot_heat_map, plot_tsne
 from ranking import create_ranking, create_ranking_
 from utils import load_gene_data, preprocess_graph, read_file, write_file
@@ -11,6 +13,7 @@ import pandas as pd
 import numpy as np
 from models import GCNModelAE
 from sklearn.metrics import davies_bouldin_score, silhouette_score
+from plots import silhouettevisual, cluster_distances
 
 # Saved models: gae_model
 
@@ -33,8 +36,8 @@ parser.add_argument('--ndim', type=int, default=16,
                     help='Number of dimension.')
 parser.add_argument('--dropout', type=float, default=0.,
                     help='Dropout rate (1 - keep probability).')
-parser.add_argument('--saved-model', type=str, default='models/gae_hom_only', help='Saved model')
-parser.add_argument('--title', type=str, default=' -- GAE -- homology -- homology', help='graph form')
+parser.add_argument('--saved-model', type=str, default='models/gae_hom_on', help='Saved model')
+parser.add_argument('--title', type=str, default=' -- GAE -- Homology -- Homology', help='graph form')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -45,7 +48,7 @@ torch.manual_seed(args.seed)
 if args.cuda:
     torch.cuda.manual_seed(args.seed)
 
-adj, features = load_gene_data(use_features=True, _adj='homology', _feat='homology')
+adj, features = load_gene_data(use_features=True, _adj='homology', _feat='ontology')
 G = nx.from_numpy_matrix(adj.toarray())
 adj_train = preprocess_graph(adj)
 
@@ -65,29 +68,36 @@ data = output
 # data = scaler.transform(output)
 
 # # Convert to pandas
-# meta_df = {}
-# _vars = []
-# for i in range(args.ndim):
-#     meta_df[str(i)] = output[:, i]
-#     _vars.append(str(i))
-# data_df = pd.DataFrame(meta_df)
+meta_df = {}
+_vars = []
+for i in range(args.ndim):
+    meta_df[str(i)] = output[:, i]
+    _vars.append(str(i))
+data_df = pd.DataFrame(meta_df)
 #
 #
-# # plot_optimal_clusters(data, "K-means GAE" + args.title, 'kmeans')
-# kmeans_labels = k_means(data, 6, model_name="models/kmeans_gae_model.pkl")
+# silhouettevisual(KMeans(6, random_state=42), data.numpy(), "Ontology Only")
+# cluster_distances(KMeans(6), data.numpy(), "Ontology Only")
+
+
+
+# plot_optimal_clusters(data, "K-means GAE" + args.title, 'kmeans')
+
+
+kmeans_labels = k_means(data, 9, model_name="models/kmeans_gae_model.pkl")
 #
 # # Add labels
-# data_df['KMeans-clusters'] = kmeans_labels
-# kmeans_unique_clusters = set(kmeans_labels)
+data_df['KMeans-clusters'] = kmeans_labels
+kmeans_unique_clusters = set(kmeans_labels)
 
 
 # # compute davies and silhoutte scores
 # scores = {}
 # scores['dav_score'] = davies_bouldin_score(data, kmeans_labels)
 # scores['sil_score'] = silhouette_score(data, kmeans_labels)
-# write_file('results/cluster_scores_gae.csv', scores)
-#
-#
+# write_file('results/scores'+args.title+'.csv', scores)
+# #
+# #
 # res = read_file("data/ms-project/geneset_pairing.csv")
 # dict = dict((v, k) for k, v in res.items())
 # data_df['gensets'] = data_df.index.map(dict)
@@ -100,7 +110,7 @@ data = output
 # agg = data_df.groupby('KMeans-clusters').agg({'gensets': 'count'})
 #
 #
-# writer = pd.ExcelWriter('results/kmeans_gae_onto_onto.xlsx')
+# writer = pd.ExcelWriter('results/membership'+args.title+'.xlsx')
 # sim.to_excel(writer, sheet_name='simple')
 # grp.to_excel(writer, sheet_name='grouped')
 # agg.to_excel(writer, sheet_name='agg')
@@ -110,7 +120,7 @@ data = output
 # Plots here
 # plots_pairwise(data_df, 'KMeans-clusters', _vars, kmeans_unique_clusters,
 #                 "Pairwise Scatter Plot for KMeans Clustering" + args.title)
-# plot_heat_map(data_df.iloc[:, 0:16], "Correlation matrix for Node Embeddings " + args.title)
+plot_heat_map(data_df.iloc[:, 0:16], "Correlation matrix for Node Embeddings " + args.title)
 #
 # plot_tsne(data_df.iloc[:, 0:16], data_df['KMeans-clusters'],
 #           "Clustering node embeddings with KMeans Perplexity: {} -- "
@@ -121,7 +131,7 @@ data = output
 # tsv_df.to_csv("tsv/kmeans_gae", sep="\t", index=False)
 
 data = data.numpy()
-create_ranking_('ranking_results/'+args.title+'.csv', data=data)
+# create_ranking_('ranking_results/'+args.title+'.csv', data=data)
 # create_ranking('results/ranking_gae.xlsx', data=data, _ids=[834, 18840, 271959, 1051])
 
 
