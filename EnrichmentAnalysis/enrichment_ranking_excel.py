@@ -1,6 +1,19 @@
+"""
+Script is used to generate the enrichment results , an excel file with the following row:
+
+'genesetID', 'Gene Set Name', 'Gene Set Description',
+'Neighbour 1 Name', 'Neighbour 1 Desc'
+'Neighbour 2 Name', 'Neighbour 2 Desc',
+'Neighbour 3 Name', 'Neighbour 3 Desc'
+'Neighbour 4 Name', 'Neighbour 4 Desc'
+
+"""
+
 import csv
 import sys
 import ctypes as ct
+
+
 csv.field_size_limit(int(ct.c_ulong(-1).value//2))
 import gseapy as gp
 import re
@@ -10,43 +23,19 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-
-# Annotation for scores
-def jac_sim(u, v):
-    """
-        Method calculates jaccard similarity between two nodes
-        :param p1: dictionary
-        :param p2: node 1
-        :param p2: node 2
-        """
-    try:
-        return round(len(set.intersection(u, v))/len(set.union(u, v)), 2)
-    except TypeError:
-        return 0
-    except ZeroDivisionError:
-        return 0
+from EnrichmentAnalysis.enrichment_utils import read_file, read_file_2, write_file
 
 
-def read_file(filename):
-    with open(filename, 'r') as csv_file:
-        reader = csv.reader(csv_file, delimiter=':')
-        my_dict = dict(reader)
-        my_dict = {u: eval(v)[2] for u, v in my_dict.items()}
-        return my_dict
+def reduce_genesets():
+    sample = read_file("enrich_red/gae-hom-hom.csv")
+    red = read_file("enrich_red/selected_genesets.csv")
+    temp = {}
+    for i in red:
+        if i in sample:
+            temp[i] = red[i]
+    write_file("enrich_red/selected_genesets.csv", temp)
 
-
-def read_file_2(filename):
-    with open(filename, 'r', encoding="utf8") as csv_file:
-        reader = csv.reader(csv_file, delimiter=':')
-        my_dict = dict(reader)
-        my_dict = {u: eval(v) for u, v in my_dict.items()}
-        return my_dict
-
-
-# get codename in parenthesis
-def get_code_name(s):
-    res = [i.strip("()") for i in re.findall(r'\(.*?\)', s)]
-    return res
+# reduce_genesets()
 
 
 lib = gp.get_library_name('Human')[53]

@@ -36,8 +36,8 @@ parser.add_argument('--ndim', type=int, default=16,
                     help='Number of dimension.')
 parser.add_argument('--dropout', type=float, default=0.,
                     help='Dropout rate (1 - keep probability).')
-parser.add_argument('--saved-model', type=str, default='models/gae_hom_on', help='Saved model')
-parser.add_argument('--title', type=str, default=' -- GAE -- Homology -- Homology', help='graph form')
+parser.add_argument('--saved-model', type=str, default='models/gae_onto_hom', help='Saved model')
+parser.add_argument('--title', type=str, default=' -- GAE -- Ontology -- Homology', help='graph form')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -48,7 +48,7 @@ torch.manual_seed(args.seed)
 if args.cuda:
     torch.cuda.manual_seed(args.seed)
 
-adj, features = load_gene_data(use_features=True, _adj='homology', _feat='ontology')
+adj, features = load_gene_data(use_features=True, _adj='ontology', _feat='homology')
 G = nx.from_numpy_matrix(adj.toarray())
 adj_train = preprocess_graph(adj)
 
@@ -76,15 +76,15 @@ for i in range(args.ndim):
 data_df = pd.DataFrame(meta_df)
 #
 #
-# silhouettevisual(KMeans(6, random_state=42), data.numpy(), "Ontology Only")
-# cluster_distances(KMeans(6), data.numpy(), "Ontology Only")
+# silhouettevisual(KMeans(8, random_state=42), data.numpy(), "Ontology Homology")
+# cluster_distances(KMeans(8), data.numpy(), "Ontology Homology")
 
 
 
 # plot_optimal_clusters(data, "K-means GAE" + args.title, 'kmeans')
 
 
-kmeans_labels = k_means(data, 9, model_name="models/kmeans_gae_model.pkl")
+kmeans_labels = k_means(data, 8, model_name="models/kmeans_gae_model.pkl")
 #
 # # Add labels
 data_df['KMeans-clusters'] = kmeans_labels
@@ -120,8 +120,8 @@ kmeans_unique_clusters = set(kmeans_labels)
 # Plots here
 # plots_pairwise(data_df, 'KMeans-clusters', _vars, kmeans_unique_clusters,
 #                 "Pairwise Scatter Plot for KMeans Clustering" + args.title)
-plot_heat_map(data_df.iloc[:, 0:16], "Correlation matrix for Node Embeddings " + args.title)
-#
+# plot_heat_map(data_df.iloc[:, 0:16], "Correlation matrix for Node Embeddings " + args.title)
+# #
 # plot_tsne(data_df.iloc[:, 0:16], data_df['KMeans-clusters'],
 #           "Clustering node embeddings with KMeans Perplexity: {} -- "
 #           "Number of Iterations: {}" + args.title, perplexity=50, n_iter=1000)
@@ -131,7 +131,7 @@ plot_heat_map(data_df.iloc[:, 0:16], "Correlation matrix for Node Embeddings " +
 # tsv_df.to_csv("tsv/kmeans_gae", sep="\t", index=False)
 
 data = data.numpy()
-# create_ranking_('ranking_results/'+args.title+'.csv', data=data)
+create_ranking_('ranking_results/'+args.title+'.csv', data=data)
 # create_ranking('results/ranking_gae.xlsx', data=data, _ids=[834, 18840, 271959, 1051])
 
 

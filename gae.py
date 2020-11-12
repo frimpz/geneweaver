@@ -24,7 +24,7 @@ parser.add_argument('--fastmode', action='store_true', default=False,
 parser.add_argument('--seed', type=int, default=42, help='Random seed.')
 parser.add_argument('--epochs', type=int, default=200,
                     help='Number of epochs to train.')
-parser.add_argument('--lr', type=float, default=0.01, #0.006
+parser.add_argument('--lr', type=float, default=0.005, #0.006
                     help='Initial learning rate.')
 parser.add_argument('--weight_decay', type=float, default=5e-4, #default=5e-4,
                     help='Weight decay (L2 loss on parameters).')
@@ -45,7 +45,7 @@ if args.cuda:
     torch.cuda.manual_seed(args.seed)
 
 
-adj, features = load_gene_data(use_features=True, _adj='ontology', _feat='ontology')
+adj, features = load_gene_data(use_features=True, _adj='ontology', _feat='homology')
 
 # Store original adjacency matrix (without diagonal entries) for later
 adj_orig = adj
@@ -89,6 +89,8 @@ def train(epoch):
         curr_loss = loss.item()
         optimizer.step()
 
+
+
         acc_train = get_acc(output, adj_label)
 
         hidden_emb = model.mu.data.numpy()
@@ -112,8 +114,8 @@ print('Test ROC score: ' + str(roc_score))
 print('Test AP score: ' + str(ap_score))
 
 
-auc_roc(hidden_emb, adj_orig, test_edges, test_edges_false, roc_score, "Ontology Only")
+auc_roc(hidden_emb, adj_orig, test_edges, test_edges_false, roc_score, "Ontology Homology")
 
-# torch.save(model.state_dict(), "models/gae_onto_only")
+torch.save(model.state_dict(), "models/gae_onto_hom")
 
-# plot_loss(indices, losses, "Epooch", "Loss", "Epooch vs loss")
+plot_loss(indices, losses, "Epooch", "Loss", "Epooch vs loss")

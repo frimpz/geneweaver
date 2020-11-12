@@ -1,3 +1,14 @@
+"""
+Script is used to create the bar plot between pairwise biological processes
+of each different method.
+
+'gae-hom-hom' vs 'jcd-hom'
+'gae-hom-onto' vs 'jcd-hom'
+'gae-onto-onto' vs 'jcd-onto'
+'gae-hom-onto' vs 'jcd-onto'
+
+"""
+
 import csv
 import sys
 import ctypes as ct
@@ -10,44 +21,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-
-
-# Annotation for scores
-def jac_sim(u, v):
-    """
-        Method calculates jaccard similarity between two nodes
-        :param p1: dictionary
-        :param p2: node 1
-        :param p2: node 2
-        """
-    try:
-        return round(len(set.intersection(u, v))/len(set.union(u, v)), 2)
-    except TypeError:
-        return 0
-    except ZeroDivisionError:
-        return 0
-
-
-def read_file(filename):
-    with open(filename, 'r') as csv_file:
-        reader = csv.reader(csv_file, delimiter=':')
-        my_dict = dict(reader)
-        my_dict = {u: eval(v) for u, v in my_dict.items()}
-        return my_dict
-
-
-def write_file(filename, dic):
-    with open(filename, 'w', newline='') as csv_file:
-        writer = csv.writer(csv_file, delimiter=':')
-        for key, value in dic.items():
-            writer.writerow([key, value])
-
-
-# get codename in parenthesis
-def get_code_name(s):
-    res = [i.strip("()") for i in re.findall(r'\(.*?\)', s)]
-    return res
-
+from EnrichmentAnalysis.enrichment_utils import read_file, read_file_2, write_file
 
 lib = gp.get_library_name('Human')[53]
 files = ["gae-hom-hom", "gae-hom-onto", "gae-onto-onto", "jcd-hom", "jcd-onto"]

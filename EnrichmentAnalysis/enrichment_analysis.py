@@ -1,10 +1,8 @@
-import csv
-import ctypes as ct
-import sys
 
-csv.field_size_limit(int(ct.c_ulong(-1).value//2))
 import gseapy as gp
 import pandas as pd
+
+from EnrichmentAnalysis.enrichment_utils import read_file, jac_sim, read_file_2
 from utils import  write_file
 import numpy as np
 import seaborn as sns
@@ -12,26 +10,6 @@ import matplotlib.pyplot as plt
 from plots import heat_map
 
 
-def jac_sim(u, v):
-    """
-        Method calculates jaccard similarity between two nodes
-        :param p1: dictionary
-        :param p2: node 1
-        :param p2: node 2
-        """
-    try:
-        return round(len(set.intersection(u, v))/len(set.union(u, v)), 2)
-    except TypeError:
-        return 0
-    except ZeroDivisionError:
-        return 0
-
-def read_file(filename):
-    with open(filename, 'r') as csv_file:
-        reader = csv.reader(csv_file, delimiter=':')
-        my_dict = dict(reader)
-        my_dict = {u: eval(v) for u, v in my_dict.items()}
-        return my_dict
 
 # connection graph and correlation plot
 def save_enrichment(x):
@@ -51,7 +29,7 @@ def save_enrichment(x):
      writer = pd.ExcelWriter('enrich-cluster/full-results.xlsx')
      for key, file in files:
           print(file)
-          cluster_data = read_file(file)
+          cluster_data = read_file_2(file)
           for i in cluster_data:
                try:
                     enr = gp.enrichr(gene_list=list(cluster_data[i][2]), gene_sets=lib, organism='Human', cutoff=0.05).results
@@ -68,7 +46,6 @@ def save_enrichment(x):
 
 
 def save_enrichment_set():
-
      lib = gp.get_library_name('Human')
      lib = lib[53]
 
